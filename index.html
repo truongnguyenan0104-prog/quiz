@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trắc nghiệm Đại số tuyến tính - Vectơ & Định thức</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Times+New+Roman&display=swap" rel="stylesheet">
+
+    <!-- MathJax CDN -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <style>
+        /* ====== GLOBAL STYLE ====== */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+            color: #222;
+        }
+
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* ====== PROGRESS BAR ====== */
+        .progress-container {
+            background: #ddd;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #003366;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .question-number {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #f0f4f8;
+        }
+
+        .correct {
+            background-color: #009600 !important;
+            color: white;
+            border-color: #009600;
+        }
+
+        .wrong {
+            background-color: #C80000 !important;
+            color: white;
+            border-color: #C80000;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f4f8;
+            border-left: 5px solid #003366;
+            border-radius: 6px;
+        }
+
+        button {
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .score-box {
+            text-align: center;
+        }
+
+        @media(max-width: 600px){
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Đề thi Trắc nghiệm Đại số tuyến tính<br>Vectơ & Định thức</h1>
+</header>
+
+<div class="container">
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div id="quiz"></div>
+</div>
+
+<script>
+const quizData = [
+{
+question: "1. Trong $\\mathbb{R}^3$, số vectơ đơn vị có độ dài bằng 1 là:",
+options: ["A. 1", "B. 2", "C. Vô số", "D. 3"],
+correct: 2,
+explanation: "Trong $\\mathbb{R}^3$, các vectơ đơn vị là các vectơ có độ dài 1. Tập hợp này tạo thành mặt cầu đơn vị nên có vô số vectơ."
+},
+{
+question: "2. Định thức của ma trận đơn vị cấp 3 là:",
+options: ["A. 0", "B. 1", "C. -1", "D. 3"],
+correct: 1,
+explanation: "Định thức của ma trận đơn vị luôn bằng 1."
+},
+{
+question: "3. Nếu hai hàng của ma trận trùng nhau thì định thức bằng:",
+options: ["A. 1", "B. -1", "C. 0", "D. Không xác định"],
+correct: 2,
+explanation: "Nếu hai hàng trùng nhau thì định thức bằng 0 do tính chất phản đối xứng."
+},
+{
+question: "4. Tích vô hướng của hai vectơ vuông góc bằng:",
+options: ["A. 1", "B. -1", "C. 0", "D. Không xác định"],
+correct: 2,
+explanation: "Hai vectơ vuông góc có góc $90^\\circ$ nên tích vô hướng bằng 0."
+},
+{
+question: "5. Nếu $\\det(A) = 5$ thì $\\det(2A)$ với ma trận cấp 3 là:",
+options: ["A. 10", "B. 20", "C. 40", "D. 8"],
+correct: 2,
+explanation: "Với ma trận cấp 3: $\\det(2A) = 2^3 \\det(A) = 8 \\cdot 5 = 40$."
+},
+{
+question: "6. Vectơ nào sau đây là tổ hợp tuyến tính của $(1,0)$ và $(0,1)$?",
+options: ["A. (2,3)", "B. (1,1,1)", "C. (0,0,1)", "D. (1)"],
+correct: 0,
+explanation: "$(1,0)$ và $(0,1)$ là cơ sở của $\\mathbb{R}^2$. Mọi vectơ trong $\\mathbb{R}^2$ đều là tổ hợp tuyến tính của chúng."
+},
+{
+question: "7. Nếu $\\det(A)=0$ thì ma trận A:",
+options: ["A. Khả nghịch", "B. Không khả nghịch", "C. Đối xứng", "D. Đơn vị"],
+correct: 1,
+explanation: "$\\det(A)=0$ thì ma trận không khả nghịch."
+},
+{
+question: "8. Định thức đổi dấu khi:",
+options: ["A. Nhân hàng với số 2", "B. Đổi chỗ hai hàng", "C. Cộng hai hàng", "D. Chuyển vị"],
+correct: 1,
+explanation: "Đổi chỗ hai hàng làm định thức đổi dấu."
+},
+{
+question: "9. Số chiều của không gian $\\mathbb{R}^n$ là:",
+options: ["A. n", "B. n+1", "C. n-1", "D. 1"],
+correct: 0,
+explanation: "Không gian $\\mathbb{R}^n$ có số chiều bằng n."
+},
+{
+question: "10. Nếu các vectơ trong $\\mathbb{R}^3$ độc lập tuyến tính thì số vectơ tối đa là:",
+options: ["A. 2", "B. 3", "C. 4", "D. Vô số"],
+correct: 1,
+explanation: "Trong $\\mathbb{R}^3$, tối đa có 3 vectơ độc lập tuyến tính."
+}
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+const quizContainer = document.getElementById("quiz");
+const progressBar = document.getElementById("progressBar");
+
+function loadQuestion(){
+    answered = false;
+    const q = quizData[currentQuestion];
+    progressBar.style.width = ((currentQuestion)/quizData.length)*100 + "%";
+
+    quizContainer.innerHTML = `
+        <div class="question-number">Câu ${currentQuestion+1} / ${quizData.length}</div>
+        <div class="question-text">${q.question}</div>
+        <ul class="options">
+            ${q.options.map((opt,i)=>`<li class="option" onclick="selectOption(${i})">${opt}</li>`).join("")}
+        </ul>
+        <div class="explanation" id="explanation">${q.explanation}</div>
+        <button onclick="nextQuestion()">Câu tiếp theo</button>
+    `;
+
+    MathJax.typeset();
+}
+
+function selectOption(index){
+    if(answered) return;
+    answered = true;
+    const options = document.querySelectorAll(".option");
+    const correctIndex = quizData[currentQuestion].correct;
+
+    options.forEach((opt,i)=>{
+        if(i === correctIndex){
+            opt.classList.add("correct");
+        }
+        if(i === index && i !== correctIndex){
+            opt.classList.add("wrong");
+        }
+    });
+
+    if(index === correctIndex) score++;
+
+    document.getElementById("explanation").style.display = "block";
+}
+
+function nextQuestion(){
+    if(currentQuestion < quizData.length -1){
+        currentQuestion++;
+        loadQuestion();
+    } else {
+        showScore();
+    }
+}
+
+function showScore(){
+    progressBar.style.width = "100%";
+    quizContainer.innerHTML = `
+        <div class="score-box">
+            <h2>Kết quả của bạn</h2>
+            <p>Bạn đạt <strong>${score} / ${quizData.length}</strong> điểm.</p>
+            <p>${score >=8 ? "Xuất sắc! Bạn đã nắm vững kiến thức." : "Hãy ôn tập thêm và thử lại nhé!"}</p>
+            <button onclick="restartQuiz()">Làm lại</button>
+        </div>
+    `;
+}
+
+function restartQuiz(){
+    currentQuestion = 0;
+    score = 0;
+    loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
